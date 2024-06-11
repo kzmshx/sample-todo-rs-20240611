@@ -6,7 +6,7 @@
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
   },
   "[sql]": {
-    "editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
+    "editor.defaultFormatter": "cweijan.vscode-database-client2"
   },
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"

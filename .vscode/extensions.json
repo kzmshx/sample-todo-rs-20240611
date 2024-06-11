@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "cweijan.vscode-database-client2",
+    "esbenp.prettier-vscode",
+    "ReneSaarsoo.sql-formatter-vsc",
+    "rust-lang.rust-analyzer",
+    "tamasfe.even-better-toml"
+  ]
+}
