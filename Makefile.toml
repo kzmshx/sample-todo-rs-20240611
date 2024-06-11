@@ -1,3 +1,14 @@
+[tasks.install]
+command = "cargo"
+args = [
+  "install",
+  "cargo-make",
+  "cargo-shuttle",
+  "cargo-watch",
+  "cocogitto",
+  "sqlx-cli",
+]
+
 [tasks.format]
 command = "cargo"
 args = ["fmt"]
@@ -5,3 +16,11 @@ args = ["fmt"]
 [tasks.test]
 command = "cargo"
 args = ["test"]
+
+[tasks.shuttle-run]
+command = "cargo"
+args = ["shuttle", "run"]
+
+[tasks.shuttle-run-watch]
+command = "cargo"
+args = ["watch", "-x", "shuttle run"]
