@@ -1,3 +1,5 @@
+.env
+
 # devcontainer
 .devcontainer/workspace/root/.bash*
 !.devcontainer/workspace/root/.bash*.example
