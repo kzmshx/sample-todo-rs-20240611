@@ -9,14 +9,18 @@
   "remoteUser": "root",
 
   /** Customizations */
-  "features": {},
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker",
         "rust-lang.rust-analyzer",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "ckolkman.vscode-postgres",
+        "ReneSaarsoo.sql-formatter-vsc"
       ],
       "settings": {
         "[json]": {
@@ -24,6 +28,9 @@
         },
         "[rust]": {
           "editor.defaultFormatter": "rust-lang.rust-analyzer"
+        },
+        "[sql]": {
+          "editor.defaultFormatter": "ReneSaarsoo.sql-formatter-vsc"
         },
         "[toml]": {
           "editor.defaultFormatter": "tamasfe.even-better-toml"
