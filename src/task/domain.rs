@@ -43,12 +43,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_task_id_from_u64() {
+    fn task_id_from_u64() {
         let id = TaskId::from(1);
         assert_eq!(id.0, 1);
     }
     #[test]
-    fn test_task_id_into_u64() {
+    fn task_id_into_u64() {
         let id = TaskId(1);
         let val: u64 = id.into();
         assert_eq!(val, 1);
