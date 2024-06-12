@@ -12,10 +12,12 @@ args = [
 [tasks.format]
 command = "cargo"
 args = ["fmt"]
+dependencies = ["install"]
 
 [tasks.test]
 command = "cargo"
 args = ["test"]
+dependencies = ["install", "format"]
 
 [tasks.shuttle-run]
 command = "cargo"
