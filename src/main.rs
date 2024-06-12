@@ -1,6 +1,8 @@
 use axum::{routing::get, Router};
 use shuttle_runtime::CustomError;
 
+mod task;
+
 async fn hello_world() -> &'static str {
     "Hello, world!"
 }
