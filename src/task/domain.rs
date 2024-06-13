@@ -38,6 +38,12 @@ impl TaskContent {
     }
 }
 
+impl From<TaskContent> for String {
+    fn from(val: TaskContent) -> Self {
+        val.0.clone()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(super) struct TaskDescription(String);
 
@@ -58,6 +64,12 @@ impl TaskDescription {
             return Err(TaskDescriptionError::TooLong);
         }
         Ok(TaskDescription(value))
+    }
+}
+
+impl From<TaskDescription> for String {
+    fn from(val: TaskDescription) -> Self {
+        val.0.clone()
     }
 }
 
@@ -100,6 +112,12 @@ mod tests {
             .to_string()
             .contains("Task content is too long"));
     }
+    #[test]
+    fn task_content_into_string() {
+        let content = TaskContent::new("Task content".to_string()).unwrap();
+        let val: String = content.into();
+        assert_eq!(val, "Task content");
+    }
 
     #[test]
     fn task_description_new() {
@@ -123,5 +141,11 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("Task description is too long"));
+    }
+    #[test]
+    fn task_description_into_string() {
+        let description = TaskDescription::new("Task description".to_string()).unwrap();
+        let val: String = description.into();
+        assert_eq!(val, "Task description");
     }
 }
