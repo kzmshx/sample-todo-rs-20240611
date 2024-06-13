@@ -1,6 +1,7 @@
+use chrono::{DateTime, Local};
 use thiserror::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(super) struct TaskId(u64);
 
 impl From<u64> for TaskId {
@@ -15,7 +16,7 @@ impl From<TaskId> for u64 {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(super) struct TaskContent(String);
 
 #[derive(Debug, Error)]
@@ -36,6 +37,10 @@ impl TaskContent {
         }
         Ok(TaskContent(value))
     }
+
+    fn new_or_panic(value: String) -> Self {
+        TaskContent::new(value).unwrap()
+    }
 }
 
 impl From<TaskContent> for String {
@@ -44,32 +49,102 @@ impl From<TaskContent> for String {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(super) struct TaskDescription(String);
 
 #[derive(Debug, Error)]
 pub(super) enum TaskDescriptionError {
-    #[error("Task description must not be empty")]
-    Empty,
     #[error("Task description is too long")]
     TooLong,
 }
 
 impl TaskDescription {
     pub(super) fn new(value: String) -> Result<Self, TaskDescriptionError> {
-        if value.is_empty() {
-            return Err(TaskDescriptionError::Empty);
-        }
         if value.len() > 2000 {
             return Err(TaskDescriptionError::TooLong);
         }
         Ok(TaskDescription(value))
+    }
+
+    fn new_or_panic(value: String) -> Self {
+        TaskDescription::new(value).unwrap()
     }
 }
 
 impl From<TaskDescription> for String {
     fn from(val: TaskDescription) -> Self {
         val.0.clone()
+    }
+}
+
+#[derive(Debug)]
+pub(super) struct NewTask {
+    content: TaskContent,
+    description: TaskDescription,
+}
+
+impl NewTask {
+    pub(super) fn new(content: TaskContent, description: TaskDescription) -> Self {
+        NewTask {
+            content,
+            description,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub(super) struct ActiveTask {
+    id: TaskId,
+    content: TaskContent,
+    description: TaskDescription,
+    created_at: DateTime<Local>,
+}
+
+impl ActiveTask {
+    pub(super) fn modify_content(self, content: TaskContent) -> Self {
+        Self {
+            id: self.id,
+            content,
+            description: self.description,
+            created_at: self.created_at,
+        }
+    }
+
+    pub(super) fn modify_description(self, description: TaskDescription) -> Self {
+        Self {
+            id: self.id,
+            content: self.content,
+            description,
+            created_at: self.created_at,
+        }
+    }
+
+    pub(super) fn close(self) -> CompletedTask {
+        CompletedTask {
+            id: self.id,
+            content: self.content,
+            description: self.description,
+            created_at: self.created_at,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub(super) struct CompletedTask {
+    id: TaskId,
+    content: TaskContent,
+    description: TaskDescription,
+    created_at: DateTime<Local>,
+}
+
+impl CompletedTask {
+    pub(super) fn reopen(self) -> ActiveTask {
+        ActiveTask {
+            id: self.id,
+            content: self.content,
+            description: self.description,
+            created_at: self.created_at,
+        }
     }
 }
 
@@ -125,15 +200,6 @@ mod tests {
         assert_eq!(description.0, "Task description");
     }
     #[test]
-    fn task_description_new_empty() {
-        let description = TaskDescription::new("".to_string());
-        assert!(description.is_err());
-        assert!(description
-            .unwrap_err()
-            .to_string()
-            .contains("Task description must not be empty"));
-    }
-    #[test]
     fn task_description_new_too_long() {
         let description = TaskDescription::new("a".repeat(2001));
         assert!(description.is_err());
@@ -147,5 +213,38 @@ mod tests {
         let description = TaskDescription::new("Task description".to_string()).unwrap();
         let val: String = description.into();
         assert_eq!(val, "Task description");
+    }
+
+    #[test]
+    fn task_operations() {
+        let task = ActiveTask {
+            id: TaskId(1),
+            content: TaskContent::new_or_panic("Task content".into()),
+            description: TaskDescription::new_or_panic("Task description".into()),
+            created_at: Local::now(),
+        };
+        assert_eq!(task.id, TaskId(1));
+        assert_eq!(
+            task.content,
+            TaskContent::new_or_panic("Task content".into())
+        );
+        assert_eq!(
+            task.description,
+            TaskDescription::new_or_panic("Task description".into())
+        );
+
+        let task = task.modify_content(TaskContent::new_or_panic("New content".into()));
+        assert_eq!(
+            task.content,
+            TaskContent::new_or_panic("New content".into())
+        );
+
+        let task = task.modify_description(TaskDescription::new_or_panic("New description".into()));
+        assert_eq!(
+            task.description,
+            TaskDescription::new_or_panic("New description".into())
+        );
+
+        task.close().reopen();
     }
 }
