@@ -3,10 +3,6 @@ use shuttle_runtime::CustomError;
 
 mod task;
 
-async fn hello_world() -> &'static str {
-    "Hello, world!"
-}
-
 #[shuttle_runtime::main]
 async fn main(#[shuttle_shared_db::Postgres] pool: sqlx::PgPool) -> shuttle_axum::ShuttleAxum {
     sqlx::migrate!()
@@ -14,7 +10,13 @@ async fn main(#[shuttle_shared_db::Postgres] pool: sqlx::PgPool) -> shuttle_axum
         .await
         .map_err(CustomError::new)?;
 
-    let router = Router::new().route("/", get(hello_world));
+    let router = Router::new()
+        .route("/hello", get(hello))
+        .merge(task::rest::router(pool));
 
     Ok(router.into())
+}
+
+async fn hello() -> &'static str {
+    "Hello, world!"
 }
