@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
-struct TaskId(u64);
+pub(super) struct TaskId(u64);
 
 impl From<u64> for TaskId {
     fn from(id: u64) -> Self {
@@ -16,10 +16,10 @@ impl From<TaskId> for u64 {
 }
 
 #[derive(Debug, Clone)]
-struct TaskContent(String);
+pub(super) struct TaskContent(String);
 
 #[derive(Debug, Error)]
-enum TaskContentError {
+pub(super) enum TaskContentError {
     #[error("Task content must not be empty")]
     Empty,
     #[error("Task content is too long")]
@@ -27,14 +27,37 @@ enum TaskContentError {
 }
 
 impl TaskContent {
-    fn new(content: String) -> Result<Self, TaskContentError> {
-        if content.is_empty() {
+    pub(super) fn new(value: String) -> Result<Self, TaskContentError> {
+        if value.is_empty() {
             return Err(TaskContentError::Empty);
         }
-        if content.len() > 500 {
+        if value.len() > 500 {
             return Err(TaskContentError::TooLong);
         }
-        Ok(TaskContent(content))
+        Ok(TaskContent(value))
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct TaskDescription(String);
+
+#[derive(Debug, Error)]
+pub(super) enum TaskDescriptionError {
+    #[error("Task description must not be empty")]
+    Empty,
+    #[error("Task description is too long")]
+    TooLong,
+}
+
+impl TaskDescription {
+    pub(super) fn new(value: String) -> Result<Self, TaskDescriptionError> {
+        if value.is_empty() {
+            return Err(TaskDescriptionError::Empty);
+        }
+        if value.len() > 2000 {
+            return Err(TaskDescriptionError::TooLong);
+        }
+        Ok(TaskDescription(value))
     }
 }
 
@@ -56,13 +79,17 @@ mod tests {
 
     #[test]
     fn task_content_new() {
-        let content = TaskContent::new("Hello".to_string()).unwrap();
-        assert_eq!(content.0, "Hello");
+        let content = TaskContent::new("Task content".to_string()).unwrap();
+        assert_eq!(content.0, "Task content");
     }
     #[test]
     fn task_content_new_empty() {
         let content = TaskContent::new("".to_string());
         assert!(content.is_err());
+        assert!(content
+            .unwrap_err()
+            .to_string()
+            .contains("Task content must not be empty"));
     }
     #[test]
     fn task_content_new_too_long() {
@@ -72,5 +99,29 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("Task content is too long"));
+    }
+
+    #[test]
+    fn task_description_new() {
+        let description = TaskDescription::new("Task description".to_string()).unwrap();
+        assert_eq!(description.0, "Task description");
+    }
+    #[test]
+    fn task_description_new_empty() {
+        let description = TaskDescription::new("".to_string());
+        assert!(description.is_err());
+        assert!(description
+            .unwrap_err()
+            .to_string()
+            .contains("Task description must not be empty"));
+    }
+    #[test]
+    fn task_description_new_too_long() {
+        let description = TaskDescription::new("a".repeat(2001));
+        assert!(description.is_err());
+        assert!(description
+            .unwrap_err()
+            .to_string()
+            .contains("Task description is too long"));
     }
 }
