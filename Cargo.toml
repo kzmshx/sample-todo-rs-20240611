@@ -9,6 +9,12 @@ chrono = "0.4.38"
 shuttle-axum = "0.45.0"
 shuttle-runtime = "0.45.0"
 shuttle-shared-db = { version = "0.45.0", features = ["postgres", "sqlx"] }
-sqlx = { version = "0.7.4", features = ["runtime-tokio", "tls-native-tls", "postgres", "migrate"] }
+sqlx = { version = "0.7.4", features = [
+	"chrono",
+	"migrate",
+	"postgres",
+	"runtime-tokio",
+	"tls-native-tls",
+] }
 thiserror = "1.0.61"
 tokio = "1.28.2"

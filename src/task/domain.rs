@@ -2,15 +2,15 @@ use chrono::{DateTime, Local};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
-pub(super) struct TaskId(u64);
+pub(super) struct TaskId(i64);
 
-impl From<u64> for TaskId {
-    fn from(id: u64) -> Self {
+impl From<i64> for TaskId {
+    fn from(id: i64) -> Self {
         TaskId(id)
     }
 }
 
-impl From<TaskId> for u64 {
+impl From<TaskId> for i64 {
     fn from(val: TaskId) -> Self {
         val.0
     }
@@ -90,6 +90,14 @@ impl NewTask {
             description,
         }
     }
+
+    pub(super) fn content(&self) -> &TaskContent {
+        &self.content
+    }
+
+    pub(super) fn description(&self) -> &TaskDescription {
+        &self.description
+    }
 }
 
 #[derive(Debug)]
@@ -101,6 +109,32 @@ pub(super) struct ActiveTask {
 }
 
 impl ActiveTask {
+    pub(super) fn new(
+        id: TaskId,
+        content: TaskContent,
+        description: TaskDescription,
+        created_at: DateTime<Local>,
+    ) -> Self {
+        ActiveTask {
+            id,
+            content,
+            description,
+            created_at,
+        }
+    }
+
+    pub(super) fn id(&self) -> &TaskId {
+        &self.id
+    }
+
+    pub(super) fn content(&self) -> &TaskContent {
+        &self.content
+    }
+
+    pub(super) fn description(&self) -> &TaskDescription {
+        &self.description
+    }
+
     pub(super) fn modify_content(self, content: TaskContent) -> Self {
         Self {
             id: self.id,
@@ -131,13 +165,31 @@ impl ActiveTask {
 
 #[derive(Debug)]
 pub(super) struct CompletedTask {
-    id: TaskId,
-    content: TaskContent,
-    description: TaskDescription,
-    created_at: DateTime<Local>,
+    pub(super) id: TaskId,
+    pub(super) content: TaskContent,
+    pub(super) description: TaskDescription,
+    pub(super) created_at: DateTime<Local>,
 }
 
 impl CompletedTask {
+    pub(super) fn new(
+        id: TaskId,
+        content: TaskContent,
+        description: TaskDescription,
+        created_at: DateTime<Local>,
+    ) -> Self {
+        CompletedTask {
+            id,
+            content,
+            description,
+            created_at,
+        }
+    }
+
+    pub(super) fn id(&self) -> &TaskId {
+        &self.id
+    }
+
     pub(super) fn reopen(self) -> ActiveTask {
         ActiveTask {
             id: self.id,
@@ -153,14 +205,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn task_id_from_u64() {
+    fn task_id_from_i64() {
         let id = TaskId::from(1);
         assert_eq!(id.0, 1);
     }
     #[test]
-    fn task_id_into_u64() {
+    fn task_id_into_i64() {
         let id = TaskId(1);
-        let val: u64 = id.into();
+        let val: i64 = id.into();
         assert_eq!(val, 1);
     }
 
