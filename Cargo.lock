@@ -2704,6 +2704,7 @@ version = "0.1.0"
 dependencies = [
  "axum 0.7.5",
  "chrono",
+ "serde",
  "shuttle-axum",
  "shuttle-runtime",
  "shuttle-shared-db",
