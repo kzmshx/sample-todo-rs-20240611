@@ -135,6 +135,10 @@ impl ActiveTask {
         &self.description
     }
 
+    pub(super) fn created_at(&self) -> &DateTime<Local> {
+        &self.created_at
+    }
+
     pub(super) fn modify_content(self, content: TaskContent) -> Self {
         Self {
             id: self.id,

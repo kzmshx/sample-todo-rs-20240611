@@ -12,7 +12,7 @@ async fn main(#[shuttle_shared_db::Postgres] pool: sqlx::PgPool) -> shuttle_axum
 
     let router = Router::new()
         .route("/hello", get(hello))
-        .merge(task::rest::router(pool));
+        .merge(task::rest::router::router(pool));
 
     Ok(router.into())
 }

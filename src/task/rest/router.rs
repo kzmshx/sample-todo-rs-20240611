@@ -2,9 +2,11 @@ use axum::{
     extract::{Path, State},
     response::IntoResponse,
     routing::{get, post},
-    Router,
+    Json, Router,
 };
 use sqlx::PgPool;
+
+use super::models::{CreateTask, UpdateTask};
 
 pub(crate) fn router(pool: sqlx::PgPool) -> Router {
     Router::new()
@@ -22,26 +24,33 @@ async fn tasks_list(State(_pool): State<PgPool>) -> impl IntoResponse {
     "List tasks"
 }
 
-async fn tasks_create(State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_create(
+    State(_pool): State<PgPool>,
+    Json(_payload): Json<CreateTask>,
+) -> impl IntoResponse {
     "Create a task"
 }
 
-async fn tasks_get(Path(_id): Path<u64>, State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_get(State(_pool): State<PgPool>, Path(_id): Path<u64>) -> impl IntoResponse {
     "Get a task"
 }
 
-async fn tasks_update(Path(_id): Path<u64>, State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_update(
+    State(_pool): State<PgPool>,
+    Path(_id): Path<u64>,
+    Json(_payload): Json<UpdateTask>,
+) -> impl IntoResponse {
     "Update a task"
 }
 
-async fn tasks_delete(Path(_id): Path<u64>, State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_delete(State(_pool): State<PgPool>, Path(_id): Path<u64>) -> impl IntoResponse {
     "Delete a task"
 }
 
-async fn tasks_close(Path(_id): Path<u64>, State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_close(State(_pool): State<PgPool>, Path(_id): Path<u64>) -> impl IntoResponse {
     "Close a task"
 }
 
-async fn tasks_reopen(Path(_id): Path<u64>, State(_pool): State<PgPool>) -> impl IntoResponse {
+async fn tasks_reopen(State(_pool): State<PgPool>, Path(_id): Path<u64>) -> impl IntoResponse {
     "Reopen a task"
 }
