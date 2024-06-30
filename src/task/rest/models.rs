@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::task::domain::{ActiveTask, NewTask};
+use crate::task::domain::ActiveTask;
 
 #[derive(Debug, Serialize)]
 pub(super) struct Task {
@@ -24,13 +24,13 @@ impl From<ActiveTask> for Task {
 }
 
 #[derive(Debug, Deserialize)]
-pub(super) struct CreateTask {
+pub(super) struct CreateTaskInput {
     content: String,
     description: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub(super) struct UpdateTask {
+pub(super) struct UpdateTaskInput {
     id: i64,
     content: Option<String>,
     description: Option<String>,

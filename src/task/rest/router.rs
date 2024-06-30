@@ -6,7 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use super::models::{CreateTask, UpdateTask};
+use super::models::{CreateTaskInput, UpdateTaskInput};
 
 pub(crate) fn router(pool: sqlx::PgPool) -> Router {
     Router::new()
@@ -26,7 +26,7 @@ async fn tasks_list(State(_pool): State<PgPool>) -> impl IntoResponse {
 
 async fn tasks_create(
     State(_pool): State<PgPool>,
-    Json(_payload): Json<CreateTask>,
+    Json(_payload): Json<CreateTaskInput>,
 ) -> impl IntoResponse {
     "Create a task"
 }
@@ -38,7 +38,7 @@ async fn tasks_get(State(_pool): State<PgPool>, Path(_id): Path<u64>) -> impl In
 async fn tasks_update(
     State(_pool): State<PgPool>,
     Path(_id): Path<u64>,
-    Json(_payload): Json<UpdateTask>,
+    Json(_payload): Json<UpdateTaskInput>,
 ) -> impl IntoResponse {
     "Update a task"
 }
